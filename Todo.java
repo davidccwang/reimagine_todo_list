@@ -1,12 +1,11 @@
+/*
+ * Created by Anand on 10/13/2016.
+ */
 package com.Cloud4;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by alpha on 10/13/2016.
- */
 
 public class Todo implements Serializable {
 
@@ -20,3 +19,10 @@ public class Todo implements Serializable {
         todos.add(new Todo(3, "Todo task 3", "10/15/2016", 3, Boolean.FALSE));
         todos.add(new Todo(4, "Todo task 4", "10/16/2016", 4, Boolean.TRUE));
     }
+    
+    private Integer id;
+    private String todoItem;
+    private String createdOn;
+    private Integer priority;
+    private Boolean completed; 
+}
