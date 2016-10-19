@@ -79,37 +79,3 @@ public class TodoApp
         System.out.println("This is the main - end");
     }
 }
-
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-    }
-}
