@@ -1,6 +1,6 @@
 /*
- * This is the initial TodoApp class - still work in progress
- * Created by Anand on 10/13/2016.
+ * TodoApp class
+ * Updated by Anand on 10/21/2016.
  */
 package com.Cloud4;
 
