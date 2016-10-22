@@ -1,28 +1,33 @@
-/*
- * TodoApp class
- * Updated by Anand on 10/21/2016.
- */
 package com.Cloud4;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import spark.Spark;
+
 import java.util.Base64;
+import java.util.List;
+
 import static spark.Spark.post;
+
+/**
+ * Updated by Cloud4 on 10/22/2016.
+ */
 
 public class TodoApp
 {
+
     public static TodoDbService todoDbService = new TodoDbService();
-    
+
     private static Gson GSON = new GsonBuilder().create();
 
     public static void main( String[] args )
     {
-        System.out.println("This is the main - begin");
+        System.out.println("This is the main - begin " + MySte.location());
 
+        /* Authenticate the user for every endpoint into this application */
         Spark.before((request,response)->{
-            System.out.println("Entering before method");
+            System.out.println(MySte.location());
             String method = request.requestMethod();
             if(method.equals("GET") || method.equals("POST") || method.equals("PUT") || method.equals("DELETE")){
                 System.out.println("Method is :" + method);
@@ -43,23 +48,33 @@ public class TodoApp
                     Spark.halt(401, "User Unauthorized");
                 }
             }
-            System.out.println("Exiting before: Method is :" + method);
+            System.out.println("Exiting before: HTTP request is :" + method);
         });
-        
+
         Spark.get("/api/todos",  (request, response) -> {
             System.out.println("Entering get todos");
-                    List<Todo> todos = todoDbService.getTodos("anand","anand123");
-                    return GSON.toJson(todos);
+            List<Todo> todos = todoDbService.getTodos("anand","anand123");
+            if (todos.isEmpty()) {
+                response.status(404);
+                return ("No Records FOUND");
+            }
+            return GSON.toJson(todos);
         });
-        
+
         Spark.get("/api/todos/:id",  (request, response) -> {
+            System.out.println("Entering get todos/:id");
             Integer id = Integer.parseInt(request.params("id"));
             Todo todo = todoDbService.getTodo(id);
+            if (todo == null) {
+                response.status(404);
+                return ("Id " + id + " NOT FOUND");
+            }
             return GSON.toJson(todo);
         });
-        
+
         post("/api/todos",  (request, response) -> {
-            System.out.println("1111111111111111111");
+            System.out.println("Entering post todos");
+            System.out.println(MySte.location());
             response.type("application/json");
 
             Todo toStore = null;
@@ -69,24 +84,26 @@ public class TodoApp
                 response.status(400);
                 return "INVALID JSON";
             }
-            System.out.println("2222222222");
+            System.out.println(MySte.location());
             todoDbService.createTodo(toStore);
-            System.out.println("333333333333333");
+            System.out.println(MySte.location());
+            response.status(201);
             return GSON.toJson(toStore);
         });
-        
-         Spark.put("/api/todos/:id",  (request, response) -> {
+
+        Spark.put("/api/todos/:id",  (request, response) -> {
+            System.out.println("Entering put todos/:id");
             Integer id = Integer.parseInt(request.params("id"));
-            if (id == null) {
-                System.out.println("4444444444444");
+            if (id == null) { /* If the id could not be obtained from the request; then error*/
+                System.out.println(MySte.location());
                 response.status(404);
                 return "NOT_FOUND";
-            }else{
+            } else { /* The id is present; then update and save */
                 Todo toStore = null;
                 try {
                     toStore = GSON.fromJson(request.body(), Todo.class);
-                    System.out.println("The id is: " + id);
-                    System.out.println("The getId is: " + toStore.getId());
+                    System.out.println("The id from the request is: " + id);
+                    System.out.println("The id from the body is: " + toStore.getId());
                 } catch (JsonSyntaxException e) {
                     response.status(400);
                     return "INVALID JSON";
@@ -95,12 +112,13 @@ public class TodoApp
                 return GSON.toJson(toStore);
             }
         });
-        
+
         Spark.delete("/api/todos/:id", (request, response) -> {
+            System.out.println("Entering delete todos/:id");
             Integer id = Integer.parseInt(request.params("id"));
             Todo todo = todoDbService.getTodo(id);
             if(todo == null){
-                System.out.println("555555555555555");
+                System.out.println(MySte.location());
                 response.status(404);
                 return "NOT_FOUND";
             }else{
@@ -108,6 +126,8 @@ public class TodoApp
                 return GSON.toJson(todo);
             }
         });
+
         System.out.println("This is the main - end");
+        System.out.println(MySte.location());
     }
 }
