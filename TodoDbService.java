@@ -1,6 +1,3 @@
-/**
- * Updated by Anand on 10/21/2016.
- */
 package com.Cloud4;
 
 import com.mongodb.DB;
@@ -13,23 +10,27 @@ import org.mongodb.morphia.query.UpdateOperations;
 
 import java.util.List;
 
+/**
+ * Updated by Cloud4 on 10/22/2016.
+ */
 public class TodoDbService {
 
     MongoClient todoClient = new MongoClient("localhost", 27017);
     Datastore todoDatastore = new Morphia().createDatastore(todoClient, "todos");
 
     public List<Todo> getTodos (String username, String password) {
+        System.out.println(MySte.location());
         System.out.println("Username is: " + username + " Password is: " + password);
         String hashedPassword = BCrypt.hashpw(password,BCrypt.gensalt());
         System.out.println("Username is: " + username + " Hashed Password is: " + hashedPassword);
         DB db = todoDatastore.getDB();
-        //db.(username,hashedPassword.toCharArray());
         List<Todo> todoList = todoDatastore.createQuery(Todo.class).asList();
         return todoList;
     }
 
     public Todo getTodo (Integer id) {
-        System.out.println("aaaaaaaaaaaaaa");
+        System.out.println("Entering getTodo");
+        System.out.println(MySte.location());
         Todo todo = todoDatastore.find(Todo.class, "id", id).get();
         if (todo != null) {
             return todo;
@@ -40,6 +41,7 @@ public class TodoDbService {
 
     public String createTodo (Todo todo) {
         System.out.println("Entering createTodo");
+        System.out.println(MySte.location());
         Integer id = todo.getId();
         System.out.println("Id: " + id + " TodoTask: " + todo.getTodoItem());
         if (this.getTodo(id) != null) {
@@ -52,7 +54,8 @@ public class TodoDbService {
     }
 
     public String updateTodo (Todo todo) {
-        System.out.println("ccccccccccc");
+        System.out.println("Entering updateTodo");
+        System.out.println(MySte.location());
         System.out.println(todo.getId() + " : " + todo.getTodoItem());
         Query<Todo> query = todoDatastore.createQuery(Todo.class).field("id").equal(todo.getId());
         UpdateOperations<Todo> ops = todoDatastore.createUpdateOperations(Todo.class).set("completed", todo.getCompleted()).
@@ -62,6 +65,8 @@ public class TodoDbService {
     }
 
     public void deleteTodo(Todo todo){
+        System.out.println("Entering deleteTodo");
+        System.out.println(MySte.location());
         System.out.println("Deleting " + todo.getId());
         Query<Todo> query = todoDatastore.createQuery(Todo.class).field("id").equal(todo.getId());
         todoDatastore.delete(query);
